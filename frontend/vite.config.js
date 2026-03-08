@@ -13,4 +13,12 @@ export default defineConfig({
       },
     }),
   ],
+  base: './',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+  },
+  preview: {
+    port: 4173,
+  }
 })

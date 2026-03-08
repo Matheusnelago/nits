@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const baseURL = 'http://localhost:8000/api/'
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/'
 const LOGIN_URL = `${baseURL}login/`
 const REFRESH_URL = `${baseURL}token/refresh/`
 const REGISTER_URL = `${baseURL}register/`
