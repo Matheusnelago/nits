@@ -22,11 +22,12 @@ COPY backend/ /app/
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV DEBUG=False
+ENV PORT=8000
 
 # Expose port
 EXPOSE 8000
 
 # Run migrations and start gunicorn
 WORKDIR /app
-CMD python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+CMD python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 2
 
