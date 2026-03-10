@@ -2,6 +2,7 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
+    path('health/', views.health_check, name='health_check'),
     path('register/', views.register, name='register'),
     path('login/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', views.CustomRefreshTokenView.as_view(), name='token_refresh'),
@@ -48,4 +49,13 @@ urlpatterns = [
     path('natis/license-verify/', views.verify_driver_license, name='license_verify'),
     path('natis/payment/', views.process_payment, name='process_payment'),
     path('natis/reports/', views.generate_report, name='generate_report'),
+
+    # Officer Dashboard APIs
+    path('officer/dashboard/summary/', views.get_officer_dashboard_summary, name='officer_dashboard_summary'),
+    path('officer/incidents/', views.get_traffic_incidents, name='traffic_incidents'),
+    path('officer/incidents/create/', views.create_traffic_incident, name='create_traffic_incident'),
+    path('officer/incidents/resolve/', views.resolve_traffic_incident, name='resolve_traffic_incident'),
+    path('officer/missing-persons/', views.get_missing_persons, name='missing_persons'),
+    path('officer/warrants/', views.get_warrants_of_arrest, name='warrants_of_arrest'),
+    path('officer/news/', views.get_news, name='news'),
 ]

@@ -87,11 +87,14 @@ export default function LoginPage() {
           is_superuser: result.data?.is_superuser || false
         })
         setIsLoggingIn(true)
+        // Reduced timeout for better UX
         setTimeout(() => {
           navigate('/')
-        }, 12000)
+        }, 1500)
       } else {
-        setError(result.error?.error || result.error?.non_field_errors?.[0] || 'Invalid credentials')
+        // The Axios login returns { success: false, error: "error message" }
+        // so result.error is the string directly, not a nested object
+        setError(result.error || 'Invalid credentials')
         setLoading(false)
       }
     } catch {
@@ -128,7 +131,7 @@ export default function LoginPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"
+          className="absolute inset-0 bg-linear-to-br from-slate-900 via-blue-900 to-slate-900"
         >
           {/* Floating orbs */}
           <motion.div
@@ -180,7 +183,6 @@ export default function LoginPage() {
               alt="ITS Logo"
               className="w-12 h-12"
             />
-            <span className="text-2xl font-bold text-white">ITS</span>
           </motion.div>
 
           {/* Carousel */}
@@ -200,7 +202,7 @@ export default function LoginPage() {
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className={`w-24 h-24 mx-auto mb-8 bg-gradient-to-r ${carouselSlides[currentSlide].color} rounded-3xl flex items-center justify-center shadow-2xl`}
+                  className={`w-24 h-24 mx-auto mb-8 bg-linear-to-r ${carouselSlides[currentSlide].color} rounded-3xl flex items-center justify-center shadow-2xl`}
                 >
                   {(() => {
                     const Icon = carouselSlides[currentSlide].icon
@@ -304,10 +306,10 @@ export default function LoginPage() {
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 flex items-center justify-center">
               Welcome Back
             </h1>
-            <p className="text-blue-300/70">
+            <p className="text-blue-300/70 flex items-center justify-center">
               Sign in to access the traffic management system
             </p>
           </motion.div>
@@ -319,7 +321,7 @@ export default function LoginPage() {
               animate={{ opacity: 1, x: 0 }}
               className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3"
             >
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+              <AlertCircle className="w-5 h-5 text-red-400 flex-0" />
               <p className="text-red-400 text-sm">{error}</p>
             </motion.div>
           )}
@@ -380,7 +382,7 @@ export default function LoginPage() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 hover:from-blue-600 hover:via-purple-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25"
+              className="w-full py-4 bg-linear-to-r from-blue-500 via-blue-600 to-purple-600 hover:from-blue-600 hover:via-purple-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25"
             >
               {loading ? (
                 <motion.div

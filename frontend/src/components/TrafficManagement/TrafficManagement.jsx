@@ -209,7 +209,7 @@ export default function TrafficManagement() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto hide-scrollbar scrollbar-thin">
           <table className="w-full">
             <thead className={darkMode ? 'bg-slate-700/50' : 'bg-gray-50'}>
               <tr>

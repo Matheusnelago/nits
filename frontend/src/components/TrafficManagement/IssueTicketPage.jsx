@@ -1,14 +1,11 @@
 import { useState } from 'react'
 import {
-  Plus, Search, Car, FileText, MapPin, Calendar, DollarSign,
-  AlertTriangle, User, Phone, Mail, Save, RefreshCw, X, CheckCircle,
-  Camera, FileUp, Clock, MapPinned
+  Plus, Car, FileText, MapPin, DollarSign,
+  AlertTriangle, Save, RefreshCw, CheckCircle, MapPinned
 } from 'lucide-react'
 import { issueTicket, getViolationTypes, getNamibianRegions } from '../../Axios'
 
 export default function IssueTicketPage() {
-  const darkMode = localStorage.getItem('darkMode') === 'true'
-
   // Form state
   const [formData, setFormData] = useState({
     plate_no: '',
@@ -100,22 +97,16 @@ export default function IssueTicketPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden min-h-0">
       {/* Header */}
-      <div className={`rounded-xl border p-6 ${
-        darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
-      }`}>
+      <div className="rounded-xl border p-6 shrink-0 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-blue-500/20 rounded-xl">
             <Plus className="w-6 h-6 text-blue-500" />
           </div>
           <div>
-            <h1 className={`text-2xl font-bold ${
-              darkMode ? 'text-white' : 'text-gray-900'
-            }`}>Issue Traffic Ticket</h1>
-            <p className={`text-sm mt-1 ${
-              darkMode ? 'text-slate-400' : 'text-gray-600'
-            }`}>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Issue Traffic Ticket</h1>
+            <p className="text-sm mt-1 text-gray-600 dark:text-slate-400">
               Record a new traffic violation and issue a fine
             </p>
           </div>
@@ -123,22 +114,18 @@ export default function IssueTicketPage() {
       </div>
 
       {/* Steps Indicator */}
-      <div className={`rounded-xl border p-4 ${
-        darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
-      }`}>
-        <div className="flex items-center justify-between">
+      <div className="rounded-xl border p-4 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700">
+        <div className="flex items-center overflow-x-auto hide-scrollbar">
           {steps.map((step, index) => (
-            <div key={step.id} className="flex items-center">
+            <div key={step.id} className="flex items-center shrink-0">
               <button
                 onClick={() => setActiveStep(step.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all whitespace-nowrap ${
                   activeStep === step.id
                     ? 'bg-blue-500 text-white'
                     : activeStep > step.id
                       ? 'bg-green-500 text-white'
-                      : darkMode
-                        ? 'bg-slate-700 text-slate-400'
-                        : 'bg-gray-100 text-gray-400'
+                      : 'bg-gray-100 text-gray-400 dark:bg-slate-700 dark:text-slate-400'
                 }`}
               >
                 {activeStep > step.id ? (
@@ -149,10 +136,10 @@ export default function IssueTicketPage() {
                 <span className="text-sm font-medium">{step.title}</span>
               </button>
               {index < steps.length - 1 && (
-                <div className={`w-8 h-0.5 mx-2 ${
+                <div className={`w-8 h-0.5 mx-2 shrink-0 ${
                   activeStep > step.id
                     ? 'bg-green-500'
-                    : darkMode ? 'bg-slate-600' : 'bg-gray-200'
+                    : 'bg-gray-200 dark:bg-slate-600'
                 }`} />
               )}
             </div>
@@ -161,22 +148,16 @@ export default function IssueTicketPage() {
       </div>
 
       {/* Form */}
-      <div className={`rounded-xl border overflow-hidden ${
-        darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
-      }`}>
+      <div className="rounded-xl border overflow-hidden bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700">
         <form onSubmit={handleSubmit}>
           {/* Step 1: Vehicle Info */}
           {activeStep === 1 && (
             <div className="p-6 space-y-6">
-              <h2 className={`text-lg font-semibold ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>Vehicle Information</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Vehicle Information</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Plate Number *
                   </label>
                   <input
@@ -186,18 +167,12 @@ export default function IssueTicketPage() {
                     onChange={handleChange}
                     required
                     placeholder="NLD-12345"
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Vehicle Year
                   </label>
                   <input
@@ -206,18 +181,12 @@ export default function IssueTicketPage() {
                     value={formData.vehicle_year}
                     onChange={handleChange}
                     placeholder="2024"
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Vehicle Make *
                   </label>
                   <input
@@ -227,18 +196,12 @@ export default function IssueTicketPage() {
                     onChange={handleChange}
                     required
                     placeholder="Toyota"
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Vehicle Model *
                   </label>
                   <input
@@ -248,18 +211,12 @@ export default function IssueTicketPage() {
                     onChange={handleChange}
                     required
                     placeholder="Corolla"
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Vehicle Color
                   </label>
                   <input
@@ -268,11 +225,7 @@ export default function IssueTicketPage() {
                     value={formData.vehicle_color}
                     onChange={handleChange}
                     placeholder="Silver"
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -293,26 +246,18 @@ export default function IssueTicketPage() {
           {/* Step 2: Violation Details */}
           {activeStep === 2 && (
             <div className="p-6 space-y-6">
-              <h2 className={`text-lg font-semibold ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>Violation Details</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Violation Details</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Violation Type *
                   </label>
                   <select
                     name="violation_type"
                     value={formData.violation_type}
                     onChange={handleChange}
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white'
-                        : 'bg-gray-50 border-gray-200 text-gray-900'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {violationTypes.data?.map(violation => (
                       <option key={violation.code} value={violation.code}>
@@ -323,15 +268,11 @@ export default function IssueTicketPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Fine Amount (NAD) *
                   </label>
                   <div className="relative">
-                    <DollarSign className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${
-                      darkMode ? 'text-slate-400' : 'text-gray-400'
-                    }`} />
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-400" />
                     <input
                       type="number"
                       name="amount"
@@ -339,19 +280,13 @@ export default function IssueTicketPage() {
                       onChange={handleChange}
                       required
                       placeholder="500"
-                      className={`pl-10 pr-4 py-2.5 rounded-lg w-full ${
-                        darkMode
-                          ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                          : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                      } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      className="pl-10 pr-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Violation Date
                   </label>
                   <input
@@ -359,18 +294,12 @@ export default function IssueTicketPage() {
                     name="violation_date"
                     value={formData.violation_date}
                     onChange={handleChange}
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white'
-                        : 'bg-gray-50 border-gray-200 text-gray-900'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Violation Time
                   </label>
                   <input
@@ -378,18 +307,12 @@ export default function IssueTicketPage() {
                     name="violation_time"
                     value={formData.violation_time}
                     onChange={handleChange}
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white'
-                        : 'bg-gray-50 border-gray-200 text-gray-900'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Officer Notes
                   </label>
                   <textarea
@@ -398,11 +321,7 @@ export default function IssueTicketPage() {
                     onChange={handleChange}
                     rows={3}
                     placeholder="Additional details about the violation..."
-                    className={`px-4 py-2.5 rounded-lg w-full resize-none ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full resize-none bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -411,11 +330,7 @@ export default function IssueTicketPage() {
                 <button
                   type="button"
                   onClick={() => setActiveStep(1)}
-                  className={`px-6 py-2.5 rounded-lg font-medium transition-colors ${
-                    darkMode
-                      ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  className="px-6 py-2.5 rounded-lg font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
                 >
                   Previous
                 </button>
@@ -434,21 +349,15 @@ export default function IssueTicketPage() {
           {/* Step 3: Location */}
           {activeStep === 3 && (
             <div className="p-6 space-y-6">
-              <h2 className={`text-lg font-semibold ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>Location Details</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Location Details</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Location Description *
                   </label>
                   <div className="relative">
-                    <MapPin className={`absolute left-3 top-3 w-4 h-4 ${
-                      darkMode ? 'text-slate-400' : 'text-gray-400'
-                    }`} />
+                    <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400 dark:text-slate-400" />
                     <input
                       type="text"
                       name="location"
@@ -456,19 +365,13 @@ export default function IssueTicketPage() {
                       onChange={handleChange}
                       required
                       placeholder="Near Shopping Centre, Main Street"
-                      className={`pl-10 pr-4 py-2.5 rounded-lg w-full ${
-                        darkMode
-                          ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                          : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                      } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      className="pl-10 pr-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Road Number
                   </label>
                   <input
@@ -477,29 +380,19 @@ export default function IssueTicketPage() {
                     value={formData.road_number}
                     onChange={handleChange}
                     placeholder="B1"
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                        : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Road Type
                   </label>
                   <select
                     name="road_type"
                     value={formData.road_type}
                     onChange={handleChange}
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white'
-                        : 'bg-gray-50 border-gray-200 text-gray-900'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select road type</option>
                     <option value="national">National Road (B1, B2, B3)</option>
@@ -512,20 +405,14 @@ export default function IssueTicketPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     Region
                   </label>
                   <select
                     name="region"
                     value={formData.region}
                     onChange={handleChange}
-                    className={`px-4 py-2.5 rounded-lg w-full ${
-                      darkMode
-                        ? 'bg-slate-700 border-slate-600 text-white'
-                        : 'bg-gray-50 border-gray-200 text-gray-900'
-                    } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className="px-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white border focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select region</option>
                     {regions.data?.map(region => (
@@ -537,26 +424,18 @@ export default function IssueTicketPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    darkMode ? 'text-slate-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                     GPS Coordinates
                   </label>
                   <div className="relative">
-                    <MapPinned className={`absolute left-3 top-3 w-4 h-4 ${
-                      darkMode ? 'text-slate-400' : 'text-gray-400'
-                    }`} />
+                    <MapPinned className="absolute left-3 top-3 w-4 h-4 text-gray-400 dark:text-slate-400" />
                     <input
                       type="text"
                       name="gps_coordinates"
                       value={formData.gps_coordinates}
                       onChange={handleChange}
                       placeholder="-22.5597, 17.0832"
-                      className={`pl-10 pr-4 py-2.5 rounded-lg w-full ${
-                        darkMode
-                          ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                          : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                      } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      className="pl-10 pr-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -566,11 +445,7 @@ export default function IssueTicketPage() {
                 <button
                   type="button"
                   onClick={() => setActiveStep(2)}
-                  className={`px-6 py-2.5 rounded-lg font-medium transition-colors ${
-                    darkMode
-                      ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  className="px-6 py-2.5 rounded-lg font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
                 >
                   Previous
                 </button>
@@ -589,9 +464,7 @@ export default function IssueTicketPage() {
           {/* Step 4: Review & Issue */}
           {activeStep === 4 && (
             <div className="p-6 space-y-6">
-              <h2 className={`text-lg font-semibold ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>Review & Issue Ticket</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Review & Issue Ticket</h2>
 
               {/* Error Message */}
               {error && (
@@ -607,7 +480,7 @@ export default function IssueTicketPage() {
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   <div>
                     <span className="text-green-500 font-medium">{success.message}</span>
-                    <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+                    <p className="text-sm text-gray-600 dark:text-slate-400">
                       Ticket Number: <span className="font-mono font-bold">{success.ticketNumber}</span>
                     </p>
                   </div>
@@ -615,44 +488,40 @@ export default function IssueTicketPage() {
               )}
 
               {/* Review Summary */}
-              <div className={`p-4 rounded-lg ${
-                darkMode ? 'bg-slate-700/50' : 'bg-gray-50'
-              }`}>
-                <h3 className={`font-medium mb-4 ${
-                  darkMode ? 'text-white' : 'text-gray-900'
-                }`}>Ticket Summary</h3>
+              <div className="p-4 rounded-lg bg-gray-50 dark:bg-slate-700/50">
+                <h3 className="font-medium mb-4 text-gray-900 dark:text-white">Ticket Summary</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>Plate Number</span>
-                    <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <span className="text-gray-500 dark:text-slate-400">Plate Number</span>
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {formData.plate_no || '-'}
                     </p>
                   </div>
                   <div>
-                    <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>Vehicle</span>
-                    <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <span className="text-gray-500 dark:text-slate-400">Vehicle</span>
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {formData.vehicle_make} {formData.vehicle_model}
                     </p>
                   </div>
                   <div>
-                    <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>Fine Amount</span>
+                    <span className="text-gray-500 dark:text-slate-400">Fine Amount</span>
                     <p className="font-medium text-green-500">N${formData.amount || '0'}</p>
                   </div>
                   <div>
-                    <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>Violation</span>
-                    <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <span className="text-gray-500 dark:text-slate-400">Violation</span>
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {violationTypes.data?.find(v => v.code === formData.violation_type)?.name || '-'}
                     </p>
                   </div>
                   <div>
-                    <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>Location</span>
-                    <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <span className="text-gray-500 dark:text-slate-400">Location</span>
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {formData.location || '-'}
                     </p>
                   </div>
                   <div>
-                    <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>Region</span>
-                    <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <span className="text-gray-500 dark:text-slate-400">Region</span>
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {regions.data?.find(r => r.code === formData.region)?.name || '-'}
                     </p>
                   </div>
@@ -664,18 +533,14 @@ export default function IssueTicketPage() {
                   type="button"
                   onClick={() => setActiveStep(3)}
                   disabled={loading}
-                  className={`px-6 py-2.5 rounded-lg font-medium transition-colors ${
-                    darkMode
-                      ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  className="px-6 py-2.5 rounded-lg font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
                 >
                   Previous
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50"
+                  className="px-6 py-2.5 bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50"
                 >
                   {loading ? (
                     <>

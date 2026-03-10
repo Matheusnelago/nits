@@ -30,9 +30,12 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 # Railway provides a RAILWAY_PUBLIC_DOMAIN or you can set CUSTOM_DOMAIN
 railway_domain = os.getenv('RAILWAY_PUBLIC_DOMAIN', '')
 heroku_domain = os.getenv('HEROKU_APP_NAME', '')
+render_domain = os.getenv('RENDER_EXTERNAL_URL', os.getenv('RENDER_SERVICE_NAME', ''))
+# Allow setting explicit domain for any hosting platform
+custom_domain = os.getenv('CUSTOM_DOMAIN', '')
 additional_hosts = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_HOSTS') else []
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localhost:5173', 'localhost:8000', railway_domain, heroku_domain] + [h.strip() for h in additional_hosts if h.strip()]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localhost:5173', 'localhost:8000', railway_domain, heroku_domain, render_domain, custom_domain] + [h.strip() for h in additional_hosts if h.strip()]
 
 
 # Application definition
@@ -174,3 +177,19 @@ SIMPLE_JWT = {
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+# Also allow specific origins in production (Railway, etc.)
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://*.railway.app',
+    'https://*.herokuapp.com',
+    'https://*.render.com',
+]
+
+# Custom Authentication Settings (for SettingsBackend in models.py)
+# Note: These are used by the custom SettingsBackend authentication
+# Currently using Django's default authentication with JWT
+LOGIN_USERNAME = os.getenv('LOGIN_USERNAME', 'admin')
+LOGIN_PASSWORD_HASH = os.getenv('LOGIN_PASSWORD_HASH', '')  # Leave empty to use Django's default auth

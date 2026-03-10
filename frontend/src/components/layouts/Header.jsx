@@ -36,12 +36,14 @@ function Header({ onToggleSidebar, toggleDarkMode, darkMode, currentPage, onPage
     // Get page title based on user role and current page
     const getPageTitle = () => {
         // Role-specific dashboard titles
+        if (isOfficer && currentPage === 'officer_dashboard') return 'Officer Dashboard';
         if (isJudiciary && currentPage === 'dashboard') return 'Judge Dashboard';
         if ((isNaTISAdmin || isNampolAdmin) && currentPage === 'dashboard') return 'NaTIS Dashboard';
         if (isMinistry && currentPage === 'dashboard') return 'Ministry Dashboard';
 
         const titles = {
             'dashboard': 'Dashboard',
+            'officer_dashboard': 'Officer Dashboard',
             'analytics': 'Analytics',
             'overview': 'Analytics Overview',
             'reports': 'Reports',
@@ -66,7 +68,9 @@ function Header({ onToggleSidebar, toggleDarkMode, darkMode, currentPage, onPage
         const crumbs = [{ id: 'dashboard', label: 'Home', path: 'dashboard' }];
 
         // Role-specific root page
-        if (isJudiciary) {
+        if (isOfficer) {
+            crumbs[0] = { id: 'officer_dashboard', label: 'Officer Dashboard', path: 'officer_dashboard' };
+        } else if (isJudiciary) {
             crumbs[0] = { id: 'judge_dashboard', label: 'Judge Dashboard', path: 'judge_dashboard' };
         } else if (isNaTISAdmin) {
             crumbs[0] = { id: 'natis_admin', label: 'NaTIS Dashboard', path: 'natis_admin' };
@@ -87,9 +91,11 @@ function Header({ onToggleSidebar, toggleDarkMode, darkMode, currentPage, onPage
             crumbs.push({ id: 'natis_admin', label: 'NaTIS Dashboard', path: 'natis_admin' });
             crumbs.push({ id: 'natis_registration', label: 'Registration', path: 'natis_registration' });
         }
+        if (currentPage === 'issue_ticket') crumbs.push({ id: 'issue_ticket', label: 'Issue Ticket', path: 'issue_ticket' });
+        if (currentPage === 'ticket_management') crumbs.push({ id: 'ticket_management', label: 'Ticket Management', path: 'ticket_management' });
 
         // Add current page if not home
-        const homePages = ['dashboard', 'judge_dashboard', 'natis_admin', 'ministry_dashboard'];
+        const homePages = ['dashboard', 'officer_dashboard', 'judge_dashboard', 'natis_admin', 'ministry_dashboard'];
         if (!homePages.includes(currentPage)) {
             const currentTitle = getPageTitle();
             if (!crumbs.find(c => c.id === currentPage)) {
@@ -153,7 +159,7 @@ function Header({ onToggleSidebar, toggleDarkMode, darkMode, currentPage, onPage
                         <nav className="flex items-center space-x-1 text-sm">
                             {breadcrumbs.map((crumb, index) => (
                                 <div key={crumb.id} className="flex items-center">
-                                    {index > 0 && <ChevronDown className="w-3 h-3 rotate-[-90deg] text-slate-400 mx-1" />}
+                                    {index > 0 && <ChevronDown className="w-3 h-3 rotate-90deg text-slate-400 mx-1" />}
                                     <button onClick={() => onPageChange(crumb.path)} className={`hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${index === breadcrumbs.length - 1 ? 'text-slate-800 dark:text-slate-200 font-medium' : 'text-slate-500 dark:text-slate-400'}`}>
                                         {crumb.label}
                                     </button>

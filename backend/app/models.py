@@ -461,3 +461,161 @@ class Vehicle(models.Model):
 
     def __str__(self):
         return f"{self.plate_no} - {self.vehicle_year} {self.vehicle_make} {self.vehicle_model}"
+
+
+class TrafficIncident(models.Model):
+    """Model for tracking real-time traffic incidents like jams, accidents, road closures"""
+    INCIDENT_TYPE_CHOICES = [
+        ('traffic_jam', 'Traffic Jam'),
+        ('accident', 'Road Accident'),
+        ('road_closure', 'Road Closure'),
+        ('construction', 'Construction/Road Works'),
+        ('weather', 'Weather Hazard'),
+        ('police_check', 'Police Checkpoint'),
+        ('event', 'Special Event'),
+        ('other', 'Other')
+    ]
+
+    SEVERITY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical')
+    ]
+
+    incident_type = models.CharField(max_length=30, choices=INCIDENT_TYPE_CHOICES)
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=200)
+    gps_coordinates = models.CharField(max_length=50, blank=True, null=True)
+    road_number = models.CharField(max_length=20, blank=True, null=True)
+    region = models.CharField(max_length=50, blank=True, null=True)
+    severity = models.CharField(max_length=20, choices=SEVERITY_CHOICES, default='medium')
+    reported_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    resolved_at = models.DateTimeField(blank=True, null=True)
+    reported_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='reported_incidents'
+    )
+
+    def __str__(self):
+        return f"{self.get_incident_type_display()} - {self.location}"
+
+
+class MissingPerson(models.Model):
+    """Model for tracking missing persons"""
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other')
+    ]
+
+    STATUS_CHOICES = [
+        ('missing', 'Missing'),
+        ('found', 'Found'),
+        ('deceased', 'Deceased')
+    ]
+
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
+    id_no = models.CharField(max_length=20, blank=True, null=True)
+    age = models.IntegerField()
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    description = models.TextField()
+    last_seen_location = models.CharField(max_length=200)
+    last_seen_date = models.DateTimeField()
+    gps_coordinates = models.CharField(max_length=50, blank=True, null=True)
+    photo = models.FileField(upload_to='missing_persons/', blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='missing')
+    reported_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    reported_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='reported_missing_persons'
+    )
+
+    def __str__(self):
+        return f"{self.firstname} {self.lastname} - {self.get_status_display()}"
+
+
+class WarrantOfArrest(models.Model):
+    """Model for tracking warrants of arrest"""
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('executed', 'Executed'),
+        ('expired', 'Expired'),
+        ('cancelled', 'Cancelled')
+    ]
+
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
+    id_no = models.CharField(max_length=20)
+    alias = models.CharField(max_length=100, blank=True, null=True)
+    offense = models.TextField()
+    warrant_number = models.CharField(max_length=50, unique=True)
+    issue_date = models.DateField()
+    issued_by = models.CharField(max_length=200)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    executed_at = models.DateTimeField(blank=True, null=True)
+    executed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='executed_warrants'
+    )
+    notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Warrant {self.warrant_number} - {self.firstname} {self.lastname}"
+
+
+class News(models.Model):
+    """Model for news and announcements"""
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    category = models.CharField(
+        max_length=50,
+        choices=[
+            ('general', 'General'),
+            ('traffic', 'Traffic'),
+            ('security', 'Security'),
+            ('weather', 'Weather'),
+            ('events', 'Events'),
+            ('policy', 'Policy Update')
+        ],
+        default='general'
+    )
+    priority = models.CharField(
+        max_length=20,
+        choices=[
+            ('low', 'Low'),
+            ('medium', 'Medium'),
+            ('high', 'High')
+        ],
+        default='medium'
+    )
+    image = models.FileField(upload_to='news/', blank=True, null=True)
+    is_published = models.BooleanField(default=True)
+    published_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(blank=True, null=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='created_news'
+    )
+
+    class Meta:
+        ordering = ['-published_at']
+
+    def __str__(self):
+        return self.title

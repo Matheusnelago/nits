@@ -73,8 +73,8 @@ export default function Layout({ children }) {
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
-            <main className={`transition-colors duration-500 flex-1 overflow-y-auto bg-slate-200 dark:bg-gray-950 ${darkMode && 'dark'}`}>
-              <div className="space-y-6 p-4 sm:p-6">
+            <main className={`transition-colors duration-500 flex-1 overflow-y-auto overflow-x-hidden bg-slate-200 dark:bg-gray-950 ${darkMode && 'dark'}`}>
+              <div className="space-y-6 p-4 sm:p-6 min-h-0">
                 {children}
               </div>
             </main>
@@ -92,8 +92,8 @@ export default function Layout({ children }) {
             onPageChange={setCurrentPage}
           />
 
-          <main className={`flex-1 overflow-y-auto bg-slate-200 dark:bg-gray-950 pb-20 ${darkMode && 'dark'}`}>
-            <div className="space-y-6 p-4">
+          <main className={`flex-1 overflow-y-auto overflow-x-hidden bg-slate-200 dark:bg-gray-950 pb-20 ${darkMode && 'dark'}`}>
+            <div className="space-y-6 p-4 min-h-0">
               {children}
             </div>
           </main>

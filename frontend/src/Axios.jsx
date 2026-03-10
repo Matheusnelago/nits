@@ -139,7 +139,37 @@ export const login = async (username, password) => {
         return { success: false, error: 'No access token received' }
     } catch (error) {
         console.error('Login error:', error.response?.data || error.message)
-        return { success: false, error: error.response?.data || error.message }
+
+        // Handle different error formats
+        let errorMessage = 'An error occurred during login'
+
+        if (error.response) {
+            // Server responded with error
+            const responseData = error.response.data
+            if (typeof responseData === 'string') {
+                errorMessage = responseData
+            } else if (responseData.detail) {
+                errorMessage = responseData.detail
+            } else if (responseData.message) {
+                errorMessage = responseData.message
+            } else if (Array.isArray(responseData)) {
+                errorMessage = responseData.join(', ')
+            } else if (typeof responseData === 'object') {
+                // Get first error value
+                const firstKey = Object.keys(responseData)[0]
+                if (firstKey) {
+                    const firstError = responseData[firstKey]
+                    errorMessage = Array.isArray(firstError) ? firstError[0] : firstError
+                }
+            }
+        } else if (error.request) {
+            // Network error - no response received
+            errorMessage = 'Unable to connect to server. Please check your internet connection.'
+        } else {
+            errorMessage = error.message || 'An unexpected error occurred'
+        }
+
+        return { success: false, error: errorMessage }
     }
 }
 
@@ -843,6 +873,73 @@ export const getVehicleById = async (vehicleId) => {
 export const updateVehicle = async (vehicleId, vehicleData) => {
     try {
         const response = await api.put(`${baseURL}natis/vehicles/${vehicleId}/update/`, vehicleData)
+        return response.data
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+// ======================
+// Officer Dashboard APIs
+// ======================
+
+export const getOfficerDashboardSummary = async () => {
+    try {
+        const response = await api.get(`${baseURL}officer/dashboard/summary/`)
+        return response.data
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const getTrafficIncidents = async () => {
+    try {
+        const response = await api.get(`${baseURL}officer/incidents/`)
+        return response.data
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const createTrafficIncident = async (incidentData) => {
+    try {
+        const response = await api.post(`${baseURL}officer/incidents/create/`, incidentData)
+        return response.data
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const resolveTrafficIncident = async (incidentId) => {
+    try {
+        const response = await api.post(`${baseURL}officer/incidents/resolve/`, { incident_id: incidentId })
+        return response.data
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const getMissingPersons = async () => {
+    try {
+        const response = await api.get(`${baseURL}officer/missing-persons/`)
+        return response.data
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const getWarrantsOfArrest = async () => {
+    try {
+        const response = await api.get(`${baseURL}officer/warrants/`)
+        return response.data
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const getNews = async () => {
+    try {
+        const response = await api.get(`${baseURL}officer/news/`)
         return response.data
     } catch (error) {
         return { success: false, error: error.response?.data || error.message }

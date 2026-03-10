@@ -1,5 +1,5 @@
-import {useState} from 'react'
-import {AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   BarChart3,
   ChevronDown,
@@ -127,6 +127,31 @@ const nampolAdminMenuItems = [
   },
 ]
 
+// Officer specific menu items
+const officerMenuItems = [
+  {
+    id: 'officer_dashboard',
+    icon: LayoutDashboard,
+    label: 'Officer Dashboard',
+    active: false,
+    roles: ['officer'],
+  },
+  {
+    id: 'issue_ticket',
+    icon: Ticket,
+    label: 'Issue Ticket',
+    active: false,
+    roles: ['officer'],
+  },
+  {
+    id: 'ticket_management',
+    icon: CheckCircle,
+    label: 'Ticket Management',
+    active: false,
+    roles: ['officer'],
+  },
+]
+
 const generalSidebarItems = [
   {
     id: 'settings',
@@ -145,7 +170,7 @@ const generalSidebarItems = [
 ]
 
 function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
-  const { user, isJudiciary, isNaTISAdmin, isMinistry, isNampolAdmin } = useAuth()
+  const { user, isJudiciary, isNaTISAdmin, isMinistry, isNampolAdmin, isOfficer } = useAuth()
   const [expandItem, setExpandItem] = useState(new Set(['']))
   const [showUserMenu, setShowUserMenu] = useState(false)
 
@@ -156,7 +181,10 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
   let menuItems = MenuItems
   let menuTitle = 'Menu'
 
-  if (isJudiciary) {
+  if (isOfficer) {
+    menuItems = officerMenuItems
+    menuTitle = 'Officer Menu'
+  } else if (isJudiciary) {
     menuItems = judgeMenuItems
     menuTitle = 'Judge Menu'
   } else if (isNaTISAdmin) {
@@ -169,7 +197,7 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
     menuItems = ministryMenuItems
     menuTitle = 'Ministry Menu'
   } else {
-    // Filter menu items based on role for admin/officer
+    // Filter menu items based on role for admin
     menuItems = MenuItems.filter(item =>
       item.roles.includes(userRole) || item.roles.includes('admin') && userRole === 'admin'
     ).map(item => {
@@ -208,6 +236,7 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
 
   // Get role display name for logo
   const getRoleDisplay = () => {
+    if (isOfficer) return 'Officer Panel'
     if (isJudiciary) return 'Judiciary'
     if (isNaTISAdmin) return 'NaTIS Admin'
     if (isNampolAdmin) return 'Nampol Admin'
@@ -216,39 +245,37 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
   }
 
   return (
-    <div className={`transition-normal duration-300 bg-white/80 dark:bg-slate-950 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col relative z-10 ${collapsed ? 'w-20' : 'w-70'}`}>
+    <div className={`transition-all duration-300 ease-in-out bg-white/80 dark:bg-slate-950 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col relative z-10 ${collapsed ? 'w-20' : 'w-70'}`}>
       {/* logo */}
       <div className='px-6 py-4 border-b border-slate-300/50 dark:border-slate-900'>
         <div className='flex items-center space-x-3'>
           <img src='/logo.svg' alt='ITS Logo' className='w-10 h-10 rounded-xl shadow-lg' />
-          {!collapsed && (
-            <div>
-              <h1 className='text-xl font-bold text-slate-900 dark:text-slate-100'>ITS</h1>
-              <p className='text-xs font-medium text-slate-500 dark:text-slate-400'>{getRoleDisplay()}</p>
-            </div>
-          )}
+          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
+            <h1 className='text-xl font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap'>ITS</h1>
+            <p className='text-xs font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap'>{getRoleDisplay()}</p>
+          </div>
         </div>
       </div>
 
       {/* Quick Stats - Only show when not collapsed */}
-      {!collapsed && (
-        <div className='px-4 py-3 border-b border-slate-300/50 dark:border-slate-800'>
-          <div className='grid grid-cols-2 gap-2'>
-            <div className='bg-linear-to-br from-blue-500 to-blue-600 rounded-lg p-2 text-white text-center'>
-              <p className='text-lg font-bold'>12</p>
-              <p className='text-[10px] opacity-80'>Officers</p>
-            </div>
-            <div className='bg-linear-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 text-white text-center'>
-              <p className='text-lg font-bold'>48</p>
-              <p className='text-[10px] opacity-80'>Tickets</p>
-            </div>
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0' : 'max-h-40 opacity-100'} px-4 py-3 border-b border-slate-300/50 dark:border-slate-800`}>
+        <div className='grid grid-cols-2 gap-2'>
+          <div className='bg-linear-to-br from-blue-500 to-blue-600 rounded-lg p-2 text-white text-center'>
+            <p className='text-lg font-bold'>12</p>
+            <p className='text-[10px] opacity-80'>Officers</p>
+          </div>
+          <div className='bg-linear-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 text-white text-center'>
+            <p className='text-lg font-bold'>48</p>
+            <p className='text-[10px] opacity-80'>Tickets</p>
           </div>
         </div>
-      )}
+      </div>
 
       {/* navigations */}
       <nav className='flex-1 p-4 space-y-2 overflow-y-auto'>
-        <p className='text-xs text-slate-700 dark:text-slate-300 p-1'>{menuTitle}</p>
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0' : 'max-h-6 opacity-100'}`}>
+          <p className='text-xs text-slate-700 dark:text-slate-300 p-1'>{menuTitle}</p>
+        </div>
         {menuItems.map((item) => {
           // Skip items without submenus that don't match role
           if (item.submenu && item.submenu.length === 0) return null
@@ -271,9 +298,9 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
               >
                 <div className='flex items-center space-x-3'>
                   <item.icon className='w-5 h-5 dark:text-white' />
-                  {!collapsed && (
-                    <span className='text-sm font-medium text-slate-800 dark:text-white'>{item.label}</span>
-                  )}
+                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
+                    <span className='text-sm font-medium text-slate-800 dark:text-white whitespace-nowrap'>{item.label}</span>
+                  </div>
                   {!collapsed && item.badge && (
                     <span className='text-xs bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium'>
                       {item.badge}
@@ -304,7 +331,9 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
         })}
 
         <div className='py-2'></div>
-        <p className='text-xs text-slate-700 dark:text-slate-300'>General</p>
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0' : 'max-h-6 opacity-100'}`}>
+          <p className='text-xs text-slate-700 dark:text-slate-300'>General</p>
+        </div>
 
         {filteredGeneralItems.map((item) => (
           <div key={item.id}>
@@ -318,9 +347,9 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
             >
               <div className='flex items-center space-x-3'>
                 <item.icon className='w-5 h-5 dark:text-white' />
-                {!collapsed && (
-                  <span className='text-sm font-medium text-slate-800 dark:text-white'>{item.label}</span>
-                )}
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
+                  <span className='text-sm font-medium text-slate-800 dark:text-white whitespace-nowrap'>{item.label}</span>
+                </div>
               </div>
             </button>
           </div>
@@ -328,8 +357,8 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
       </nav>
 
       {/* user profile with dropdown */}
-      {!collapsed && (
-        <div className='p-4 border-t border-slate-300/50 dark:border-slate-900'>
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0' : 'max-h-40 opacity-100'} border-t border-slate-300/50 dark:border-slate-900`}>
+        <div className='p-4'>
           <div className='relative'>
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -371,7 +400,7 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
             </AnimatePresence>
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }

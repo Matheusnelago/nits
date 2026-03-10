@@ -22,7 +22,7 @@ COPY . .
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV DEBUG=False
-ENV DATABASE_URL=
+ENV DATABASE_URL="postgresql://postgres:nHxOKjreYAEHzhgwJimFhQiIZiclJJtg@postgres.railway.internal:5432/railway"
 
 # Expose port
 EXPOSE 8000

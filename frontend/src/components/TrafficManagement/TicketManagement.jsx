@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
-  Search, RefreshCw, Filter, CheckCircle, XCircle, Clock,
-  AlertTriangle, FileText, MoreVertical, X, Save, DollarSign,
-  Calendar, User, MapPin, Car, Eye, Edit, Trash2, ChevronDown
+  Search, RefreshCw, CheckCircle, XCircle, Clock,
+  AlertTriangle, FileText, X, Save, Calendar, Car, MapPin, Edit
 } from 'lucide-react'
 import {
   getAllOfficerTickets, lookupTicket, resolveTicket,
@@ -10,8 +9,6 @@ import {
 } from '../../Axios'
 
 export default function TicketManagement() {
-  const darkMode = localStorage.getItem('darkMode') === 'true'
-
   // State
   const [tickets, setTickets] = useState([])
   const [management, setManagement] = useState([])
@@ -208,7 +205,7 @@ export default function TicketManagement() {
         {statCards.map((stat) => (
           <div
             key={stat.key}
-            className={`relative overflow-hidden rounded-xl p-4 bg-gradient-to-br ${stat.color} shadow-lg`}
+            className={`relative overflow-hidden rounded-xl p-4 bg-linear-to-br ${stat.color} shadow-lg`}
           >
             <div className="absolute -right-4 -bottom-4 opacity-20">
               <stat.icon className="w-24 h-24" />
@@ -222,29 +219,19 @@ export default function TicketManagement() {
       </div>
 
       {/* Main Content */}
-      <div className={`rounded-xl border overflow-hidden backdrop-blur-sm ${
-        darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-gray-200'
-      }`}>
+      <div className="rounded-xl border overflow-hidden backdrop-blur-sm bg-white dark:bg-slate-800/50 border-gray-200 dark:border-slate-700">
         {/* Toolbar */}
-        <div className={`p-4 border-b flex flex-col sm:flex-row gap-4 ${
-          darkMode ? 'border-slate-700' : 'border-gray-200'
-        }`}>
+        <div className="p-4 border-b flex flex-col sm:flex-row gap-4 border-gray-200 dark:border-slate-700">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${
-              darkMode ? 'text-slate-400' : 'text-gray-400'
-            }`} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-400" />
             <input
               type="text"
               placeholder="Search tickets by number or plate..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className={`pl-10 pr-4 py-2.5 rounded-lg w-full ${
-                darkMode
-                  ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                  : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-              } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className="pl-10 pr-4 py-2.5 rounded-lg w-full bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -254,13 +241,8 @@ export default function TicketManagement() {
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value)
-                // Filter logic could be added here
               }}
-              className={`px-4 py-2.5 rounded-lg ${
-                darkMode
-                  ? 'bg-slate-700 border-slate-600 text-white'
-                  : 'bg-gray-50 border-gray-200 text-gray-900'
-              } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className="px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white border focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
@@ -273,11 +255,7 @@ export default function TicketManagement() {
 
             <button
               onClick={loadTickets}
-              className={`p-2.5 rounded-lg transition-colors ${
-                darkMode
-                  ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              className="p-2.5 rounded-lg transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
               title="Refresh"
             >
               <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
@@ -288,43 +266,25 @@ export default function TicketManagement() {
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className={darkMode ? 'bg-slate-700/50' : 'bg-gray-50'}>
+            <thead className="bg-gray-50 dark:bg-slate-700/50">
               <tr>
-                <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                  darkMode ? 'text-slate-400' : 'text-gray-500'
-                }`}>Ticket #</th>
-                <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                  darkMode ? 'text-slate-400' : 'text-gray-500'
-                }`}>Vehicle</th>
-                <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                  darkMode ? 'text-slate-400' : 'text-gray-500'
-                }`}>Violation</th>
-                <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                  darkMode ? 'text-slate-400' : 'text-gray-500'
-                }`}>Amount</th>
-                <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                  darkMode ? 'text-slate-400' : 'text-gray-500'
-                }`}>Location</th>
-                <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                  darkMode ? 'text-slate-400' : 'text-gray-500'
-                }`}>Date</th>
-                <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                  darkMode ? 'text-slate-400' : 'text-gray-500'
-                }`}>Status</th>
-                <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                  darkMode ? 'text-slate-400' : 'text-gray-500'
-                }`}>Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">Ticket #</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">Vehicle</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">Violation</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">Amount</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">Location</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">Actions</th>
               </tr>
             </thead>
-            <tbody className={`divide-y ${
-              darkMode ? 'divide-slate-700' : 'divide-gray-200'
-            }`}>
+            <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
               {loading ? (
                 <tr>
                   <td colSpan="8" className="px-4 py-12 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-                      <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>
+                      <span className="text-gray-500 dark:text-slate-400">
                         Loading tickets...
                       </span>
                     </div>
@@ -333,41 +293,33 @@ export default function TicketManagement() {
               ) : tickets.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="px-4 py-12 text-center">
-                    <FileText className={`w-12 h-12 mx-auto mb-3 ${
-                      darkMode ? 'text-slate-600' : 'text-gray-300'
-                    }`} />
-                    <p className={darkMode ? 'text-slate-400' : 'text-gray-500'}>
+                    <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-slate-600" />
+                    <p className="text-gray-500 dark:text-slate-400">
                       No tickets found
                     </p>
                   </td>
                 </tr>
               ) : (
                 tickets.map((ticket, index) => (
-                  <tr key={ticket.id || index} className={`${
-                    darkMode ? 'hover:bg-slate-700/30' : 'hover:bg-gray-50'
-                  } transition-colors`}>
+                  <tr key={ticket.id || index} className="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`font-mono text-sm font-semibold ${
-                        darkMode ? 'text-blue-400' : 'text-blue-600'
-                      }`}>
+                      <span className="font-mono text-sm font-semibold text-blue-600 dark:text-blue-400">
                         {ticket.ticket_issued || '-'}
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        <Car className={`w-4 h-4 ${darkMode ? 'text-slate-500' : 'text-gray-400'}`} />
-                        <span className={`font-medium ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
+                        <Car className="w-4 h-4 text-gray-400 dark:text-slate-500" />
+                        <span className="font-medium text-gray-900 dark:text-white">
                           {ticket.plate_no || '-'}
                         </span>
                       </div>
-                      <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>
+                      <span className="text-xs text-gray-500 dark:text-slate-500">
                         {ticket.vehicle_make} {ticket.vehicle_model}
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={darkMode ? 'text-slate-300' : 'text-gray-700'}>
+                      <span className="text-gray-700 dark:text-slate-300">
                         {ticket.violation_type ?
                           ticket.violation_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
                           : '-'
@@ -375,26 +327,20 @@ export default function TicketManagement() {
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`font-bold ${
-                        darkMode ? 'text-green-400' : 'text-green-600'
-                      }`}>
+                      <span className="font-bold text-green-600 dark:text-green-400">
                         {formatAmount(ticket.amount)}
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-1 max-w-[150px]">
-                        <MapPin className={`w-3 h-3 shrink-0 ${
-                          darkMode ? 'text-slate-500' : 'text-gray-400'
-                        }`} />
-                        <span className={`text-sm truncate ${
-                          darkMode ? 'text-slate-300' : 'text-gray-600'
-                        }`}>
+                      <div className="flex items-center gap-1 max-w-150px">
+                        <MapPin className="w-3 h-3 shrink-0 text-gray-400 dark:text-slate-500" />
+                        <span className="text-sm truncate text-gray-600 dark:text-slate-300">
                           {ticket.location || '-'}
                         </span>
                       </div>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={darkMode ? 'text-slate-300' : 'text-gray-600'}>
+                      <span className="text-gray-600 dark:text-slate-300">
                         {formatDate(ticket.date)}
                       </span>
                     </td>
@@ -408,22 +354,14 @@ export default function TicketManagement() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => openStatusModal(ticket)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            darkMode
-                              ? 'hover:bg-slate-600 text-slate-400 hover:text-blue-400'
-                              : 'hover:bg-gray-100 text-gray-500 hover:text-blue-600'
-                          }`}
+                          className="p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-500 hover:text-blue-600 dark:hover:bg-slate-600 dark:text-slate-400 dark:hover:text-blue-400"
                           title="Change Status"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => openResolveModal(ticket)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            darkMode
-                              ? 'hover:bg-slate-600 text-slate-400 hover:text-green-400'
-                              : 'hover:bg-gray-100 text-gray-500 hover:text-green-600'
-                          }`}
+                          className="p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-500 hover:text-green-600 dark:hover:bg-slate-600 dark:text-slate-400 dark:hover:text-green-400"
                           title="Resolve Ticket"
                         >
                           <CheckCircle className="w-4 h-4" />
@@ -441,25 +379,19 @@ export default function TicketManagement() {
       {/* Resolve Modal */}
       {showResolveModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className={`bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl border ${
-            darkMode ? 'border-slate-700' : 'border-gray-200'
-          }`}>
-            <div className={`px-6 py-4 border-b flex items-center justify-between ${
-              darkMode ? 'border-slate-700 bg-slate-800' : 'border-gray-200 bg-gray-50'
-            }`}>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 dark:border-slate-700">
+            <div className="px-6 py-4 border-b flex items-center justify-between border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800">
               <div>
-                <h2 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                   Resolve Ticket
                 </h2>
-                <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                <p className="text-sm text-gray-500 dark:text-slate-400">
                   {selectedTicket?.ticket_issued}
                 </p>
               </div>
               <button
                 onClick={() => setShowResolveModal(false)}
-                className={`p-2 rounded-lg transition-colors ${
-                  darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-gray-200 text-gray-500'
-                }`}
+                className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-500 dark:text-slate-400"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -467,19 +399,13 @@ export default function TicketManagement() {
 
             <div className="p-6 space-y-4">
               <div>
-                <label className={`block text-sm font-medium mb-2 ${
-                  darkMode ? 'text-slate-300' : 'text-gray-700'
-                }`}>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                   Resolution Status
                 </label>
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className={`w-full px-4 py-2.5 rounded-lg ${
-                    darkMode
-                      ? 'bg-slate-700 border-slate-600 text-white'
-                      : 'bg-gray-50 border-gray-200 text-gray-900'
-                  } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white border focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="paid">Paid</option>
                   <option value="closed">Closed</option>
@@ -487,9 +413,7 @@ export default function TicketManagement() {
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-2 ${
-                  darkMode ? 'text-slate-300' : 'text-gray-700'
-                }`}>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                   Resolution Notes
                 </label>
                 <textarea
@@ -497,32 +421,22 @@ export default function TicketManagement() {
                   onChange={(e) => setResolutionNotes(e.target.value)}
                   placeholder="Enter resolution details..."
                   rows={4}
-                  className={`w-full px-4 py-2.5 rounded-lg resize-none ${
-                    darkMode
-                      ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400'
-                      : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
-                  } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className="w-full px-4 py-2.5 rounded-lg resize-none bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 border focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
 
-            <div className={`px-6 py-4 border-t flex justify-end gap-3 ${
-              darkMode ? 'border-slate-700' : 'border-gray-200'
-            }`}>
+            <div className="px-6 py-4 border-t flex justify-end gap-3 border-gray-200 dark:border-slate-700">
               <button
                 onClick={() => setShowResolveModal(false)}
-                className={`px-5 py-2.5 rounded-lg font-medium transition-colors ${
-                  darkMode
-                    ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className="px-5 py-2.5 rounded-lg font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
               >
                 Cancel
               </button>
               <button
                 onClick={handleResolve}
                 disabled={loading}
-                className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all disabled:opacity-50 flex items-center gap-2"
+                className="px-5 py-2.5 bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 {loading ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -539,34 +453,26 @@ export default function TicketManagement() {
       {/* Status Change Modal */}
       {showStatusModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className={`bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl border ${
-            darkMode ? 'border-slate-700' : 'border-gray-200'
-          }`}>
-            <div className={`px-6 py-4 border-b flex items-center justify-between ${
-              darkMode ? 'border-slate-700 bg-slate-800' : 'border-gray-200 bg-gray-50'
-            }`}>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 dark:border-slate-700">
+            <div className="px-6 py-4 border-b flex items-center justify-between border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800">
               <div>
-                <h2 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                   Update Status
                 </h2>
-                <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                <p className="text-sm text-gray-500 dark:text-slate-400">
                   {selectedTicket?.ticket_issued}
                 </p>
               </div>
               <button
                 onClick={() => setShowStatusModal(false)}
-                className={`p-2 rounded-lg transition-colors ${
-                  darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-gray-200 text-gray-500'
-                }`}
+                className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-500 dark:text-slate-400"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-6">
-              <label className={`block text-sm font-medium mb-2 ${
-                darkMode ? 'text-slate-300' : 'text-gray-700'
-              }`}>
+              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
                 Select New Status
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -577,9 +483,7 @@ export default function TicketManagement() {
                     className={`p-3 rounded-lg text-sm font-medium transition-all ${
                       selectedStatus === status
                         ? getStatusColor(status) + ' ring-2 ring-offset-2 ring-blue-500'
-                        : darkMode
-                          ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
                     }`}
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -588,23 +492,17 @@ export default function TicketManagement() {
               </div>
             </div>
 
-            <div className={`px-6 py-4 border-t flex justify-end gap-3 ${
-              darkMode ? 'border-slate-700' : 'border-gray-200'
-            }`}>
+            <div className="px-6 py-4 border-t flex justify-end gap-3 border-gray-200 dark:border-slate-700">
               <button
                 onClick={() => setShowStatusModal(false)}
-                className={`px-5 py-2.5 rounded-lg font-medium transition-colors ${
-                  darkMode
-                    ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className="px-5 py-2.5 rounded-lg font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
               >
                 Cancel
               </button>
               <button
                 onClick={handleStatusChange}
                 disabled={loading || !selectedStatus}
-                className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium transition-all disabled:opacity-50 flex items-center gap-2"
+                className="px-5 py-2.5 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 {loading ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />

@@ -16,6 +16,14 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, Toke
 
 from django.contrib.auth import get_user_model
 
+
+# Health check endpoint
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health_check(request):
+    """Health check endpoint for monitoring"""
+    return JsonResponse({'status': 'ok'})
+
 # Custom JWT Token serializer to include user role
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -157,24 +165,13 @@ def is_authenticated(request):
     return JsonResponse({'authenticated': False})
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def login(request):
-    try:
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        if not username or not password:
-            return JsonResponse({'error': 'Username and password are required'}, status=400)
-
-        user = User.objects.filter(username=username).first()
-        if not user or not user.check_password(password):
-            return JsonResponse({'error': 'Invalid credentials'}, status=401)
-
-        return JsonResponse({'success': True, 'message': 'Login successful'})
-
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+# REMOVED: Custom login function that conflicts with JWT
+# The JWT endpoint at /api/login/ handles authentication properly
+# Keeping this comment as reference for what was removed:
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def login(request):
+#     ... (removed - was not returning JWT tokens)
 
 
 @api_view(['POST'])
@@ -2261,3 +2258,289 @@ def update_driver(request, driver_id):
             'error': str(e)
         }, status=500)
 
+
+
+# ======================
+# Officer Dashboard APIs - Real-time road data
+# ======================
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_traffic_incidents(request):
+    """
+    Get all active traffic incidents (traffic jams, accidents, road closures, etc.)
+    """
+    try:
+        incidents = TrafficIncident.objects.filter(is_active=True).order_by('-reported_at')[:50]
+        
+        incident_list = []
+        for incident in incidents:
+            incident_list.append({
+                'id': incident.id,
+                'incident_type': incident.incident_type,
+                'incident_type_display': incident.get_incident_type_display(),
+                'title': incident.title,
+                'description': incident.description,
+                'location': incident.location,
+                'gps_coordinates': incident.gps_coordinates,
+                'road_number': incident.road_number,
+                'region': incident.region,
+                'severity': incident.severity,
+                'reported_at': incident.reported_at.isoformat() if incident.reported_at else None,
+                'updated_at': incident.updated_at.isoformat() if incident.updated_at else None
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'data': incident_list
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_missing_persons(request):
+    """
+    Get all active missing persons
+    """
+    try:
+        missing_persons = MissingPerson.objects.filter(status='missing').order_by('-reported_at')[:30]
+        
+        persons_list = []
+        for person in missing_persons:
+            persons_list.append({
+                'id': person.id,
+                'firstname': person.firstname,
+                'lastname': person.lastname,
+                'id_no': person.id_no,
+                'age': person.age,
+                'gender': person.gender,
+                'gender_display': person.get_gender_display(),
+                'description': person.description,
+                'last_seen_location': person.last_seen_location,
+                'last_seen_date': person.last_seen_date.isoformat() if person.last_seen_date else None,
+                'gps_coordinates': person.gps_coordinates,
+                'photo': person.photo.url if person.photo else None,
+                'status': person.status,
+                'reported_at': person.reported_at.isoformat() if person.reported_at else None
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'data': persons_list
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_warrants_of_arrest(request):
+    """
+    Get all active warrants of arrest
+    """
+    try:
+        warrants = WarrantOfArrest.objects.filter(status='active').order_by('-issue_date')[:30]
+        
+        warrants_list = []
+        for warrant in warrants:
+            warrants_list.append({
+                'id': warrant.id,
+                'firstname': warrant.firstname,
+                'lastname': warrant.lastname,
+                'id_no': warrant.id_no,
+                'alias': warrant.alias,
+                'offense': warrant.offense,
+                'warrant_number': warrant.warrant_number,
+                'issue_date': warrant.issue_date.isoformat() if warrant.issue_date else None,
+                'issued_by': warrant.issued_by,
+                'status': warrant.status,
+                'notes': warrant.notes,
+                'created_at': warrant.created_at.isoformat() if warrant.created_at else None
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'data': warrants_list
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_news(request):
+    """
+    Get published news and announcements
+    """
+    try:
+        news_items = News.objects.filter(
+            is_published=True
+        ).order_by('-published_at')[:20]
+        
+        news_list = []
+        for news in news_items:
+            news_list.append({
+                'id': news.id,
+                'title': news.title,
+                'content': news.content,
+                'category': news.category,
+                'category_display': news.get_category_display(),
+                'priority': news.priority,
+                'image': news.image.url if news.image else None,
+                'published_at': news.published_at.isoformat() if news.published_at else None,
+                'expires_at': news.expires_at.isoformat() if news.expires_at else None
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'data': news_list
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_traffic_incident(request):
+    """
+    Create a new traffic incident
+    """
+    try:
+        incident = TrafficIncident.objects.create(
+            incident_type=request.data.get('incident_type', 'other'),
+            title=request.data.get('title', ''),
+            description=request.data.get('description', ''),
+            location=request.data.get('location', ''),
+            gps_coordinates=request.data.get('gps_coordinates', ''),
+            road_number=request.data.get('road_number', ''),
+            region=request.data.get('region', ''),
+            severity=request.data.get('severity', 'medium'),
+            reported_by=request.user
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Traffic incident reported successfully',
+            'data': {
+                'id': incident.id,
+                'incident_type': incident.incident_type,
+                'title': incident.title,
+                'location': incident.location,
+                'severity': incident.severity
+            }
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def resolve_traffic_incident(request):
+    """
+    Resolve/close a traffic incident
+    """
+    incident_id = request.data.get('incident_id')
+    
+    if not incident_id:
+        return JsonResponse({'error': 'Incident ID required'}, status=400)
+    
+    try:
+        from django.utils import timezone
+        
+        incident = TrafficIncident.objects.get(id=incident_id)
+        incident.is_active = False
+        incident.resolved_at = timezone.now()
+        incident.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Traffic incident resolved successfully'
+        })
+    
+    except TrafficIncident.DoesNotExist:
+        return JsonResponse({'error': 'Incident not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_officer_dashboard_summary(request):
+    """
+    Get summary data for officer dashboard
+    """
+    try:
+        officer = None
+        try:
+            officer = Officer.objects.get(user=request.user)
+        except Officer.DoesNotExist:
+            pass
+        
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        today = timezone.now().date()
+        tomorrow = today + timedelta(days=1)
+        
+        tickets_today = 0
+        if officer:
+            tickets_today = Ticket.objects.filter(
+                officer=officer,
+                date__date__gte=today,
+                date__date__lt=tomorrow
+            ).count()
+        
+        total_tickets = 0
+        if officer:
+            total_tickets = Ticket.objects.filter(officer=officer).count()
+        
+        active_incidents = TrafficIncident.objects.filter(is_active=True).count()
+        missing_persons = MissingPerson.objects.filter(status='missing').count()
+        active_warrants = WarrantOfArrest.objects.filter(status='active').count()
+        recent_news = News.objects.filter(
+            is_published=True,
+            published_at__gte=timezone.now() - timedelta(days=7)
+        ).count()
+        
+        return JsonResponse({
+            'success': True,
+            'data': {
+                'tickets_today': tickets_today,
+                'total_tickets': total_tickets,
+                'active_incidents': active_incidents,
+                'missing_persons': missing_persons,
+                'active_warrants': active_warrants,
+                'recent_news': recent_news
+            }
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)

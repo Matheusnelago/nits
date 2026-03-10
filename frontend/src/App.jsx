@@ -23,6 +23,7 @@ import {
 
 // Pages
 import Dashboard from './components/Dashboard/AdminDashboard'
+import OfficerDashboard from './components/Dashboard/OfficerDashboard'
 import SettingsPage from './components/SettingsPage/SettingsPage'
 import IssueTicketPage from './components/TrafficManagement/IssueTicketPage'
 import TicketManagement from './components/TrafficManagement/TicketManagement'
@@ -55,14 +56,25 @@ function MainLayout() {
   const [darkMode, setDarkMode] = useState(() => {
     // Get dark mode preference from localStorage or default to true (dark mode)
     const savedMode = localStorage.getItem('darkMode');
-    return savedMode !== null ? JSON.parse(savedMode) : true;
+    const isDark = savedMode !== null ? JSON.parse(savedMode) : true;
+    // Apply dark class on initial load
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    }
+    return isDark;
   });
   const navigate = useNavigate()
-  const { logout: authLogout, isJudiciary, isNaTISAdmin, isMinistry, isNampolAdmin } = useAuth()
+  const { logout: authLogout, isJudiciary, isNaTISAdmin, isMinistry, isNampolAdmin, isOfficer } = useAuth()
 
   // Save preferences to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    // Toggle dark class on HTML element for Tailwind's dark mode
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, [darkMode]);
 
   useEffect(() => {
@@ -79,8 +91,15 @@ function MainLayout() {
     navigate('/login')
   }
 
-  // Mobile bottom navigation items - show different items for judges
-  const mobileNavItems = isJudiciary
+  // Mobile bottom navigation items - show different items based on role
+  const mobileNavItems = isOfficer
+    ? [
+        { id: 'officer_dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+        { id: 'issue_ticket', icon: Ticket, label: 'Ticket' },
+        { id: 'ticket_management', icon: CheckCircle, label: 'Tickets' },
+        { id: 'settings', icon: Settings, label: 'Settings' },
+      ]
+    : isJudiciary
     ? [
         { id: 'judge_dashboard', icon: Scale, label: 'Cases' },
         { id: 'defendant_files', icon: Users, label: 'Files' },
@@ -112,6 +131,26 @@ function MainLayout() {
       ]
 
   const renderPage = () => {
+    // If user is officer, show officer pages
+    if (isOfficer) {
+      switch (currentPage) {
+        case 'officer_dashboard':
+          return <OfficerDashboard onPageChange={setCurrentPage} />
+        case 'issue_ticket':
+          return <IssueTicketPage />
+        case 'ticket_management':
+          return <TicketManagement />
+        case 'settings':
+          return <SettingsPage />
+        case 'notifications':
+          return <NotificationsPage />
+        case 'help_center':
+          return <HelpCenter />
+        default:
+          return <OfficerDashboard onPageChange={setCurrentPage} />
+      }
+    }
+
     // If user is judiciary, show judge dashboard
     if (isJudiciary) {
       switch (currentPage) {
@@ -260,7 +299,7 @@ function MainLayout() {
         </main>
 
         {/* Mobile Bottom Navigation */}
-        <div className='fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 z-[70] shadow-lg'>
+        <div className='fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 z-70 shadow-lg'>
           <nav className='flex justify-around items-center h-16'>
             {mobileNavItems.map((item) => {
               const Icon = item.icon

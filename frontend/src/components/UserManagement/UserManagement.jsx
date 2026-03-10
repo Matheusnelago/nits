@@ -145,11 +145,13 @@ export default function UserManagement() {
     { value: 'officer', label: 'Officer' }
   ]
 
-  // Get all users from backend
+  // Get all users from backend (exclude admin from display)
   const filteredUsers = users.filter(user =>
-    user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.role?.toLowerCase().includes(searchQuery.toLowerCase())
+    user.role !== 'admin' && (
+      user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.role?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   )
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
