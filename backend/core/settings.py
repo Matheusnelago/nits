@@ -35,7 +35,26 @@ render_domain = os.getenv('RENDER_EXTERNAL_URL', os.getenv('RENDER_SERVICE_NAME'
 custom_domain = os.getenv('CUSTOM_DOMAIN', '')
 additional_hosts = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_HOSTS') else []
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localhost:5173', 'localhost:8000', railway_domain, heroku_domain, render_domain, custom_domain] + [h.strip() for h in additional_hosts if h.strip()]
+# Build list of allowed hosts
+allowed_hosts_list = ['localhost', '127.0.0.1', 'localhost:5173', 'localhost:8000']
+if railway_domain:
+    allowed_hosts_list.append(railway_domain)
+if heroku_domain:
+    allowed_hosts_list.append(heroku_domain)
+if render_domain:
+    allowed_hosts_list.append(render_domain)
+    # Also add without www for Render
+    allowed_hosts_list.append(render_domain.replace('https://', '').replace('http://', '').split('/')[0])
+if custom_domain:
+    allowed_hosts_list.append(custom_domain)
+# Add all additional hosts
+allowed_hosts_list.extend([h.strip() for h in additional_hosts if h.strip()])
+
+# Always add a wildcard for Render *.render.com
+allowed_hosts_list.append('.onrender.com')
+allowed_hosts_list.append('onrender.com')
+
+ALLOWED_HOSTS = allowed_hosts_list
 
 
 # Application definition
@@ -178,6 +197,17 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+# CSRF trusted origins for production
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://*.railway.app',
+    'https://*.herokuapp.com',
+    'https://*.render.com',
+    'https://*.onrender.com',
+]
+
 # Also allow specific origins in production (Railway, etc.)
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:5173',
@@ -186,6 +216,7 @@ CORS_ORIGIN_WHITELIST = [
     'https://*.railway.app',
     'https://*.herokuapp.com',
     'https://*.render.com',
+    'https://*.onrender.com',
 ]
 
 # Custom Authentication Settings (for SettingsBackend in models.py)
